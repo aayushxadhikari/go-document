@@ -23,22 +23,23 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 	databaseURL := os.Getenv("DATABASE_URL")
-	if databaseURL == ""{
+	if databaseURL == "" {
 		log.Fatal("DATABASE_URL is required")
 	}
 
-	pool, err:= database.Connect(databaseURL)
-	if err!=nil{
+	pool, err := database.Connect(databaseURL)
+	if err != nil {
 		log.Fatal(err)
 	}
 	defer pool.Close()
 
 	log.Println("Connected to PostgreSQL")
-	
+
 	mux := http.NewServeMux()
 
 	documentRepo := repository.NewDocumentRepository(pool)
-	documentService := service.NewDocumentService(documentRepo, "uploads")
+	chunkRepo := repository.NewChunkRepository(pool)
+	documentService := service.NewDocumentService(documentRepo, chunkRepo, "uploads")
 	documentHandler := handler.NewDocumentHandler(documentService)
 
 	mux.HandleFunc("POST /documents", documentHandler.Upload)

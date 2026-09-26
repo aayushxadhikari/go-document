@@ -12,15 +12,18 @@ import (
 
 type DocumentService struct {
 	repo      *repository.DocumentRepository
+	chunkRepo *repository.ChunkRepository
 	uploadDir string
 }
 
 func NewDocumentService(
 	repo *repository.DocumentRepository,
+	chunkRepo *repository.ChunkRepository,
 	uploadDir string,
 ) *DocumentService {
 	return &DocumentService{
 		repo:      repo,
+		chunkRepo: chunkRepo,
 		uploadDir: uploadDir,
 	}
 }

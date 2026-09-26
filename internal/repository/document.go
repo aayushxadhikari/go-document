@@ -42,3 +42,25 @@ func (r *DocumentRepository) Create(
 	}
 	return &document, nil
 }
+
+func (r *DocumentRepository) UpdateStatus(
+	ctx context.Context,
+	documentID int64,
+	status string,
+) error {
+	const query = `
+		UPDATE documents 
+		SET status = $1
+		WHERE id = $2
+	`
+
+	result, err := r.pool.Exec(ctx, query, status, documentID)
+	if err != nil {
+		return fmt.Errorf("update document status:%w", err)
+	}
+
+	if result.RowsAffected() == 0 {
+		return fmt.Errorf("document %d not found", documentID)
+	}
+	return nil
+}
